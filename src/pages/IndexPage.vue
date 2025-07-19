@@ -1,36 +1,75 @@
 <template>
-  <q-page class="q-pa-md">
-    <h5>กรอกข้อมูล</h5>
-
-    <q-form @submit="onSubmit">
-      <q-input v-model="name" label="ชื่อ" outlined dense required />
-
+  <div class="q-pa-md" style="max-width: 400px">
+    <q-form @submit="onSubmit" @reset="onReset" class="q-gutter-md">
       <q-input
-        v-model.number="age"
-        label="อายุ"
-        type="number"
-        outlined
-        dense
-        required
-        class="q-mt-md"
+        filled
+        v-model="name"
+        label="ชื่อ-สกุล *"
+        hint="ชื่อและนามสกุล"
+        lazy-rules
+        :rules="[(val) => (val && val.length > 0) || 'กรุณาพิมพ์ชื่อ']"
       />
 
-      <q-btn label="บันทึก" type="submit" color="primary" class="q-mt-lg" />
+      <q-input
+        filled
+        type="number"
+        v-model="age"
+        label="อายุ *"
+        lazy-rules
+        :rules="[
+          (val) => (val !== null && val !== '') || 'กรุณาใส่อายุ',
+          (val) => (val > 0 && val < 100) || 'กรุณาใส่อายุจริง',
+        ]"
+      />
+
+      <q-toggle v-model="accept" label="ยอมรับ" />
+
+      <div>
+        <q-btn label="ยอมรับ" type="submit" color="primary" />
+        <q-btn label="ยกเลิก" type="reset" color="primary" flat class="q-ml-sm" />
+      </div>
     </q-form>
-  </q-page>
+  </div>
 </template>
 
-<script setup>
+<script>
+import { useQuasar } from 'quasar'
 import { ref } from 'vue'
 
-const name = ref('')
-const age = ref(null)
+export default {
+  setup() {
+    const $q = useQuasar()
 
-function onSubmit() {
-  console.log('ชื่อ:', name.value)
-  console.log('อายุ:', age.value)
-  alert(`ชื่อ: ${name.value}, อายุ: ${age.value}`)
+    const name = ref(null)
+    const age = ref(null)
+    const accept = ref(false)
+    return {
+      name,
+      age,
+      accept,
+      onSubmit() {
+        if (accept.value !== true) {
+          $q.notify({
+            color: 'red-5',
+            textColor: 'white',
+            icon: 'warning',
+            message: 'คุณจำเป็นต้องยอมรับ',
+          })
+        } else {
+          $q.notify({
+            color: 'green-4',
+            textColor: 'white',
+            icon: 'cloud_done',
+            message: 'ข้อมูลได้รับการยืนยัน',
+          })
+        }
+      },
+      onReset() {
+        name.value = null
+        age.value = null
+        accept.value = false
+      },
+    }
+  },
 }
 </script>
-
-<style scoped></style>
