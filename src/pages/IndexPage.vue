@@ -4,29 +4,29 @@
       <q-input
         filled
         v-model="name"
-        label="ชื่อ-สกุล *"
-        hint="ชื่อและนามสกุล"
+        label="ชื่อ-สกุล: *"
+        hint="กรุณาใส่ชื่อและนามสกุล"
         lazy-rules
-        :rules="[(val) => (val && val.length > 0) || 'กรุณาพิมพ์ชื่อ']"
+        :rules="[(val) => (val && val.length > 0) || 'กรุณาใส่ข้อความที่ถูกต้อง']"
       />
 
       <q-input
         filled
         type="number"
         v-model="age"
-        label="อายุ *"
+        label="อายุ: *"
         lazy-rules
         :rules="[
-          (val) => (val !== null && val !== '') || 'กรุณาใส่อายุ',
-          (val) => (val > 0 && val < 100) || 'กรุณาใส่อายุจริง',
+          (val) => (val !== null && val !== '') || 'กรุณาพิมพ์อายุของคุณนะครับ',
+          (val) => (val > 0 && val < 100) || 'กรุณาใส่อายุที่ถูกต้องนะจ๊ะ',
         ]"
       />
 
-      <q-toggle v-model="accept" label="ยอมรับ" />
+      <q-toggle v-model="accept" label="I accept the license and terms" />
 
       <div>
-        <q-btn label="ยอมรับ" type="submit" color="primary" />
-        <q-btn label="ยกเลิก" type="reset" color="primary" flat class="q-ml-sm" />
+        <q-btn label="ยืนยัน" type="submit" color="primary" />
+        <q-btn label="เริ่มใหม่" type="reset" color="primary" flat class="q-ml-sm" />
       </div>
     </q-form>
   </div>
@@ -43,27 +43,30 @@ export default {
     const name = ref(null)
     const age = ref(null)
     const accept = ref(false)
+
     return {
       name,
       age,
       accept,
+
       onSubmit() {
         if (accept.value !== true) {
           $q.notify({
             color: 'red-5',
             textColor: 'white',
             icon: 'warning',
-            message: 'คุณจำเป็นต้องยอมรับ',
+            message: 'You need to accept the license and terms first',
           })
         } else {
           $q.notify({
             color: 'green-4',
             textColor: 'white',
             icon: 'cloud_done',
-            message: 'ข้อมูลได้รับการยืนยัน',
+            message: 'Submitted',
           })
         }
       },
+
       onReset() {
         name.value = null
         age.value = null
